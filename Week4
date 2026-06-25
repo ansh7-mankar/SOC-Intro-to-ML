@@ -1,0 +1,132 @@
+#1
+Linear Regression cannot be used for probability because:-
+1. Linear Regression can give outputs below 0 or above 1, which is not possible for probability as probability must always be between 0 and 1.
+2. Linear Regression predicts continuous outputs but we need a number that tells the chance of something being in a class.
+
+
+#2
+Given:
+β=(0.5,−1),x=(1,2)
+
+log(P(Y=1|X=x)/(1−P(Y=1|X=x)))=xTβ
+
+P(Y=1|X=x) = σ(xTβ) = (1/1+(e^−xTβ))
+
+xTβ=(1)*(0.5) + (2)*(−1)
+   = 0.5 − 2 
+   = − 1.5
+
+e^-xTβ=4.48
+
+Thus P(Y=1|X=x)=0.18
+
+
+#3
+For xTβ=3x(1)​−2x(2)​+1
+Descision Boundary:3x(1)​−2x(2)​+1=0
+
+For Class 1:3x(1)​−2x(2)​+1>0
+For Class 0:3x(1)​−2x(2)​+1<0
+
+
+#4
+In One vs Rest Approach,
+One Binary Classifier for each class is made and for each class a logistic regression model is trained.
+When a new input is provided ,each classifier outputs a probability and the highest probability is chosen and the output is chosen.
+
+In Softmax (Multinomial) Approach,
+One model is trained for all the classes together.This Model calculates a score for every class.
+Using the SoftMax function probabilities are obtained for every class using their respective scores.
+
+Differences:
+
+One vs Rest Approach:
+1. For each class one binary classifier is trained.
+2. One class is treated as positive and all others as negative by the binary classifier.
+3. Softmax function is not used.
+
+Softmax (Multinomial) Approach:
+1. Only one model is trained for all the classes together.
+2. It calculates the probability for every class at the same time.
+3. Softmax function is used.
+
+
+#5
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+data=load_breast_cancer()
+
+X=data.data
+y=data.target
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
+
+model=LogisticRegression(max_iter=10000)
+
+model.fit(X_train,y_train)
+
+probs=model.predict_proba(X_test)
+
+print("First 5 predicted probabilities:")
+print(probs[:5])
+
+pred=model.predict(X_test)
+
+print("First 5 predictions:")
+print(pred[:5])
+
+pred03=[]
+
+for i in probs:
+    if i[1]>=0.3:
+        pred03.append(1)
+    else:
+        pred03.append(0)
+
+pred07=[]
+
+for i in probs:
+    if i[1]>=0.7:
+        pred07.append(1)
+    else:
+        pred07.append(0)
+
+count03=0
+for i in range(len(pred)):
+    if pred[i]!=pred[i]:
+        count03+=1
+
+count07=0
+for i in range(len(pred)):
+    if pred[i]!=pred07[i]:
+        count07+=1
+
+print("Predictions changed (0.3): ",count03)
+print("Predictions changed (0.7): ",count07)
+
+
+#6
+For a predicting a Serious Disease we should choose an α less than 0.05 as we will be able to detect more sick people.
+Even if the Number of Flase Positives increase, we can do a retest on the people.Thus we will ensure that no sick people are 
+left out.
+
+
+#7
+For One vs all, we need one binary classifier for each class so 5 binary classifiers in total.
+For All pairs, we use formula k*(k-1)/2 and since we have k=5, we get 10 binary classfiers.
+
+All Pairs tends to become more expensive when we reach around k=20 or more as the number of binary classifier required increase.
+
+
+#8
+Let there be 3 classes:
+
+Class A: Small circle in the center.
+Class B: Circle around Class A.
+Class C: Outer Circle around both Class A and Class B.
+
+The classifier for Class B vs Rest cannot separate the middle circle from both the inner and outer circles using a single straight line.
+
+This is due to the Property that Class B is not linearly separable from the other classes.
